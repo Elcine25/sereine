@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+    <title>Sereine</title>
+    <meta name="description" content="Sereine, application de soutien émotionnel pour les femmes : se poser, suivre son humeur et trouver de l’aide en cas de détresse, de façon simple et privée." />
+
+    <!-- PWA : installation sur l'écran d'accueil (Android et iPhone) -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Sereine" />
+
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+        background-color: #ffffff;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+
+    <!-- Service worker : garde l'app disponible hors connexion (voir public/sw.js).
+         Seulement pour la version publiée : avec le serveur de développement (npx expo start),
+         il servirait d'anciens bundles. On le retire alors, avec ses caches. -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          var dev = document.querySelector('script[src*=".bundle"]');
+          if (dev) {
+            navigator.serviceWorker.getRegistrations().then(function (inscrits) {
+              inscrits.forEach(function (sw) {
+                sw.unregister();
+              });
+            });
+            if (window.caches) {
+              caches.keys().then(function (cles) {
+                cles.forEach(function (cle) {
+                  caches.delete(cle);
+                });
+              });
+            }
+            return;
+          }
+          navigator.serviceWorker.register('/sw.js').catch(function (error) {
+            console.error('Service worker non enregistré :', error);
+          });
+        });
+      }
+    </script>
+  </head>
+
+  <body>
+    <noscript>Active JavaScript pour utiliser Sereine.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
